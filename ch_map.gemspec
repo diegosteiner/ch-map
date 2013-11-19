@@ -8,6 +8,6 @@ Gem::Specification.new do |s|
   s.homepage = ""
 
   s.add_runtime_dependency "railties", ">= 3.1.0"
-
+  s.add_dependency "jquery-ui-rails", ">= 4.1.0"
   s.files = Dir["lib/**/*"] + ["README.md", "LICENSE"]
 end

@@ -1,0 +1,62 @@
+(($) ->
+  $.event.trigger(
+    type: "map_element_loaded",
+  )
+  $.widget( "diegosteiner.ch_map", {
+
+    options: {
+      value: 0
+      autoload: false
+      src: "<%= asset_path('ch_map.svg') %>"
+      aspect_ratio: 0.62
+      events: {
+        'click': -> {}
+        'mouseenter': -> {}
+        'mouseleave': -> {}
+      }
+      toggleable_elements: (element) ->
+        return [
+          $(element).find("#cantons>path").get()
+          $(element).find("#canton_names text").get()
+        ]
+    }
+
+    _toggleable_elements: ->
+      te = @options.toggleable_elements
+      elements = te(@element) if $.isFunction(te)
+      elements = te if $.isArray(te)
+      return (e for e in ([].concat.apply([], elements)) when e?)
+
+    _initialize_callbacks: ->
+      for event, callback of @options.events
+        for element in @_toggleable_elements()
+          $(element).on(event, callback)
+
+    _initialize_aspect_ratio_enforcement: ->
+      @enforce_aspect_ratio()
+      $(window).resize( =>
+        @enforce_aspect_ratio()
+      )
+
+    enforce_aspect_ratio: ->
+      $(@element).css('height', $(@element).width() * @options.aspect_ratio)
+
+    load: ->
+      $(@element).load(@options.src, =>
+        $(@element).addClass('loaded')
+        @_initialize_aspect_ratio_enforcement()
+        @_initialize_callbacks()
+        for element in @_toggleable_elements()
+          try
+            $(element).trigger('map_element_loaded')
+          catch e
+#            console.log(e)
+      )
+
+    is_loaded: ->
+      return $(@element).hasClass('loaded')
+
+    _create: ->
+      @load() if @options.autoload == true
+  })
+) jQuery
