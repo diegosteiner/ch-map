@@ -27,7 +27,8 @@
         this.callbacks = {
           click: $.Callbacks(),
           mouseenter: $.Callbacks(),
-          mouseleave: $.Callbacks()
+          mouseleave: $.Callbacks(),
+          element_loaded: $.Callbacks()
         };
         _ref = this.options.callbacks;
         for (type in _ref) {
