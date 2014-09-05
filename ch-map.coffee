@@ -1,4 +1,6 @@
 (($) ->
+  NAMESPACE = 'chmap'
+
   class CHMap
     constructor: (element, options) ->
       @element = element
@@ -30,7 +32,6 @@
         callbacks = [callbacks] unless $.isArray(callbacks)
         for callback in callbacks
           @callbacks[type].add callback
-          console.log callback.length
 
       @extend_SVGElement() if @options.extend_SVGElement == true
       @load() if @options.autoload == true
@@ -89,11 +90,23 @@
         @_initialize_aspect_ratio_enforcement()
         @_initialize_callbacks()
 
-    is_loaded: ->
+    loaded: ->
       return $(@element).hasClass('loaded')
 
-  $.fn.chmap = (options) ->
-    $(this).each ->
-      new CHMap(this, options)
+  $.fn.chmap = (param) ->
+    window.chmaps ||= {}
 
+    methods =
+      initialize: ->
+        window[NAMESPACE][this.selector] = new CHMap(this, param)
+      loaded: ->
+        window[NAMESPACE][this.selector].loaded()
+
+    if methods[param]
+      methods[param].apply this, Array::slice.call(arguments, 1)
+    else if typeof param is "object" or not param
+      methods.initialize.apply this, arguments
+    else
+      $.error "Method " + param + " does not exist on chmap"
+    return
 ) jQuery

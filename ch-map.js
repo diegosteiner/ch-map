@@ -2,7 +2,8 @@
 (function() {
 
   (function($) {
-    var CHMap;
+    var CHMap, NAMESPACE;
+    NAMESPACE = 'chmap';
     CHMap = (function() {
 
       function CHMap(element, options) {
@@ -37,7 +38,6 @@
           for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
             callback = callbacks[_i];
             this.callbacks[type].add(callback);
-            console.log(callback.length);
           }
         }
         if (this.options.extend_SVGElement === true) {
@@ -158,17 +158,31 @@
         });
       };
 
-      CHMap.prototype.is_loaded = function() {
+      CHMap.prototype.loaded = function() {
         return $(this.element).hasClass('loaded');
       };
 
       return CHMap;
 
     })();
-    return $.fn.chmap = function(options) {
-      return $(this).each(function() {
-        return new CHMap(this, options);
-      });
+    return $.fn.chmap = function(param) {
+      var methods;
+      window.chmaps || (window.chmaps = {});
+      methods = {
+        initialize: function() {
+          return window[NAMESPACE][this.selector] = new CHMap(this, param);
+        },
+        loaded: function() {
+          return window[NAMESPACE][this.selector].loaded();
+        }
+      };
+      if (methods[param]) {
+        methods[param].apply(this, Array.prototype.slice.call(arguments, 1));
+      } else if (typeof param === "object" || !param) {
+        methods.initialize.apply(this, arguments);
+      } else {
+        $.error("Method " + param + " does not exist on chmap");
+      }
     };
   })(jQuery);
 
