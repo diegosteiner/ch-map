@@ -11,6 +11,7 @@
             click: []
             mouseenter: []
             mouseleave: []
+            element_loaded: []
           }
           toggleable_elements: (element) ->
             return [
@@ -40,13 +41,15 @@
         @enforce_aspect_ratio()
 
     _initialize_callbacks: ->
-      for type, callback of @callbacks
-        continue if callback.length == 0
-        for element in @_toggleable_elements()
+      for element in @_toggleable_elements()
+        for type, callback of @callbacks
+          continue if type == 'element_loaded'
+          continue if callback.length == 0
           ((type, callback) ->
             $(element).on type, ->
               callback.fire(this)
           )(type, callback)
+        @callbacks['element_loaded'].fire(element) if @callbacks['element_loaded']?
 
     _toggleable_elements: ->
       te = @options.toggleable_elements

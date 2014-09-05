@@ -16,7 +16,8 @@
           callbacks: {
             click: [],
             mouseenter: [],
-            mouseleave: []
+            mouseleave: [],
+            element_loaded: []
           },
           toggleable_elements: function(element) {
             return [$(element).find("#cantons>path").get(), $(element).find("#canton_names text").get()];
@@ -56,28 +57,32 @@
       };
 
       CHMap.prototype._initialize_callbacks = function() {
-        var callback, element, type, _ref, _results;
-        _ref = this.callbacks;
+        var callback, element, type, _fn, _i, _len, _ref, _ref1, _results;
+        _ref = this._toggleable_elements();
         _results = [];
-        for (type in _ref) {
-          callback = _ref[type];
-          if (callback.length === 0) {
-            continue;
-          }
-          _results.push((function() {
-            var _i, _len, _ref1, _results1;
-            _ref1 = this._toggleable_elements();
-            _results1 = [];
-            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-              element = _ref1[_i];
-              _results1.push((function(type, callback) {
-                return $(element).on(type, function() {
-                  return callback.fire(this);
-                });
-              })(type, callback));
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          element = _ref[_i];
+          _ref1 = this.callbacks;
+          _fn = function(type, callback) {
+            return $(element).on(type, function() {
+              return callback.fire(this);
+            });
+          };
+          for (type in _ref1) {
+            callback = _ref1[type];
+            if (type === 'element_loaded') {
+              continue;
             }
-            return _results1;
-          }).call(this));
+            if (callback.length === 0) {
+              continue;
+            }
+            _fn(type, callback);
+          }
+          if (this.callbacks['element_loaded'] != null) {
+            _results.push(this.callbacks['element_loaded'].fire(element));
+          } else {
+            _results.push(void 0);
+          }
         }
         return _results;
       };
