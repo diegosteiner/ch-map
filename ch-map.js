@@ -3,7 +3,7 @@
 
   (function($) {
     var CHMap, NAMESPACE;
-    NAMESPACE = 'chmap';
+    NAMESPACE = 'chmap_objects';
     CHMap = (function() {
 
       function CHMap(element, options) {
@@ -151,15 +151,21 @@
 
       CHMap.prototype.load = function() {
         var _this = this;
-        return $(this.element).load('images/ch_map.svg', function() {
+        $(this.element).addClass('loading');
+        $(this.element).load('images/ch_map.svg', function() {
           $(_this.element).addClass('loaded');
           _this._initialize_aspect_ratio_enforcement();
           return _this._initialize_callbacks();
         });
+        return $(this.element).removeClass('loading');
       };
 
       CHMap.prototype.loaded = function() {
         return $(this.element).hasClass('loaded');
+      };
+
+      CHMap.prototype.loading = function() {
+        return $(this.element).hasClass('loading');
       };
 
       return CHMap;
@@ -167,21 +173,33 @@
     })();
     return $.fn.chmap = function(param) {
       var methods;
-      window.chmaps || (window.chmaps = {});
+      window[NAMESPACE] || (window[NAMESPACE] = {});
       methods = {
         initialize: function() {
-          return window[NAMESPACE][this.selector] = new CHMap(this, param);
+          window[NAMESPACE][this.selector] = new CHMap(this, param);
+          return this;
         },
         loaded: function() {
           return window[NAMESPACE][this.selector].loaded();
+        },
+        loading: function() {
+          return window[NAMESPACE][this.selector].loading();
+        },
+        load: function() {
+          window[NAMESPACE][this.selector].load();
+          return window[NAMESPACE][this.selector].loaded();
+        },
+        enforce_aspect_ratio: function() {
+          window[NAMESPACE][this.selector].enforce_aspect_ratio();
+          return window[NAMESPACE][this.selector]['options']['aspect_ratio'];
         }
       };
       if (methods[param]) {
-        methods[param].apply(this, Array.prototype.slice.call(arguments, 1));
+        return methods[param].apply(this, Array.prototype.slice.call(arguments, 1));
       } else if (typeof param === "object" || !param) {
-        methods.initialize.apply(this, arguments);
+        return methods.initialize.apply(this, arguments);
       } else {
-        $.error("Method " + param + " does not exist on chmap");
+        return $.error("Method " + param + " does not exist on chmap");
       }
     };
   })(jQuery);

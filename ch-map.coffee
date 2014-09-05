@@ -1,5 +1,5 @@
 (($) ->
-  NAMESPACE = 'chmap'
+  NAMESPACE = 'chmap_objects'
 
   class CHMap
     constructor: (element, options) ->
@@ -85,28 +85,41 @@
       $(@element).css('height', $(@element).width() * @options.aspect_ratio)
 
     load: ->
+      $(@element).addClass('loading')
       $(@element).load 'images/ch_map.svg', =>
         $(@element).addClass('loaded')
         @_initialize_aspect_ratio_enforcement()
         @_initialize_callbacks()
+      $(@element).removeClass('loading')
 
     loaded: ->
       return $(@element).hasClass('loaded')
 
+    loading: ->
+      return $(@element).hasClass('loading')
+
   $.fn.chmap = (param) ->
-    window.chmaps ||= {}
+    window[NAMESPACE] ||= {}
 
     methods =
       initialize: ->
         window[NAMESPACE][this.selector] = new CHMap(this, param)
+        return this
       loaded: ->
-        window[NAMESPACE][this.selector].loaded()
+        return window[NAMESPACE][this.selector].loaded()
+      loading: ->
+        return window[NAMESPACE][this.selector].loading()
+      load: ->
+        window[NAMESPACE][this.selector].load()
+        return window[NAMESPACE][this.selector].loaded()
+      enforce_aspect_ratio: ->
+        window[NAMESPACE][this.selector].enforce_aspect_ratio()
+        return window[NAMESPACE][this.selector]['options']['aspect_ratio']
 
     if methods[param]
-      methods[param].apply this, Array::slice.call(arguments, 1)
+      return methods[param].apply this, Array::slice.call(arguments, 1)
     else if typeof param is "object" or not param
-      methods.initialize.apply this, arguments
+      return methods.initialize.apply this, arguments
     else
-      $.error "Method " + param + " does not exist on chmap"
-    return
+      return $.error "Method " + param + " does not exist on chmap"
 ) jQuery
