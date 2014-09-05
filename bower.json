@@ -1,0 +1,22 @@
+{
+  "name": "ch-map",
+  "version": "0.0.2",
+  "homepage": "https://github.com/diegosteiner/rails_ch_map",
+  "authors": [
+    "Diego P. Steiner <diego.steiner@u041.ch>"
+  ],
+  "description": "SVG Map of Switzerland",
+  "main": "ch-map.js",
+  "keywords": [
+    "ch-map",
+    "switzerland"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
