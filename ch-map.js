@@ -153,7 +153,7 @@
       CHMap.prototype.load = function() {
         var _this = this;
         $(this.element).addClass('loading');
-        $(this.element).load('images/ch_map.svg', function() {
+        $(this.element).load('./images/ch_map.svg', function() {
           $(_this.element).addClass('loaded');
           _this._initialize_aspect_ratio_enforcement();
           return _this._initialize_callbacks();

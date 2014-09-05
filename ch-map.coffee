@@ -87,7 +87,7 @@
 
     load: ->
       $(@element).addClass('loading')
-      $(@element).load 'images/ch_map.svg', =>
+      $(@element).load './images/ch_map.svg', =>
         $(@element).addClass('loaded')
         @_initialize_aspect_ratio_enforcement()
         @_initialize_callbacks()
