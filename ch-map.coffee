@@ -26,6 +26,7 @@
         click: $.Callbacks()
         mouseenter: $.Callbacks()
         mouseleave: $.Callbacks()
+        element_loaded: $.Callbacks()
       }
 
       for type, callbacks of @options.callbacks
